@@ -105,17 +105,14 @@
                 <option value="good">Good</option>
                 <option value="moderate">Moderate</option>
                 <option value="poor">Poor</option>
-                <option value="bad">Bad</option>
+                <option value="bad">Dead</option>
             </select>
             <label>Growth Stage</label>
             <select id="growth_stage">
-                <option value="sapling">Sapling</option>
                 <option value="young">Young</option>
                 <option value="mature">Mature</option>
                 <option value="old">Old</option>
             </select>
-            <label>Road Width (m)</label>
-            <input type="number" id="road_width_m" value="24">
             <label>Height (m)</label>
             <input type="number" id="height_m" min="10" max="25" step="0.1" value="10">
             <label>Width (m)</label>
@@ -181,7 +178,6 @@
             document.getElementById("status").innerHTML =
                 "Saved. FID: " + result.fid;
             document.getElementById("treeForm").reset();
-            document.getElementById("road_width_m").value = 24;
             document.getElementById("height_m").value = 10;
             document.getElementById("width_m").value = 0.5;
             getLocation();
