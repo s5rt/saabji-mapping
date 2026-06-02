@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tree Survey</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            background: #fff;
+            color: #000;
+            padding: 12px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 12px;
+            margin-bottom: 4px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #000;
+            background: #fff;
+            color: #000;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 20px;
+            padding: 14px;
+            border: none;
+            background: #000;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .status {
+            margin-top: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .gps {
+            font-size: 13px;
+            margin-top: 10px;
+            padding: 8px;
+            border: 1px solid #000;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Tree Inventory Form</h2>
+        <div class="gps" id="gpsStatus">
+            Waiting for GPS...
+        </div>
+        <form id="treeForm">
+            <label>Tree ID</label>
+            <input type="text" id="tree_id">
+            <label>Common Name</label>
+            <input type="text" id="common_name">
+            <label>Scientific Name</label>
+            <input type="text" id="scientific_name">
+            <label>Synonyms</label>
+            <input type="text" id="synonyms">
+            <label>Family</label>
+            <input type="text" id="family">
+            <label>Leaf Characteristics</label>
+            <input type="text" id="leaf_characteristics">
+            <label>Phenology</label>
+            <input type="text" id="phenology">
+            <label>Type</label>
+            <input type="text" id="type">
+            <label>Condition</label>
+            <select id="condition">
+                <option value="good">Good</option>
+                <option value="moderate">Moderate</option>
+                <option value="poor">Poor</option>
+                <option value="bad">Bad</option>
+            </select>
+            <label>Growth Stage</label>
+            <select id="growth_stage">
+                <option value="sapling">Sapling</option>
+                <option value="young">Young</option>
+                <option value="mature">Mature</option>
+                <option value="old">Old</option>
+            </select>
+            <label>Road Width (m)</label>
+            <input type="number" id="road_width_m" value="24">
+            <label>Height (m)</label>
+            <input type="number" id="height_m" min="10" max="25" step="0.1" value="10">
+            <label>Width (m)</label>
+            <input type="number" id="width_m" min="0.5" max="5" step="0.1" value="0.5">
+            <button type="submit">Save Record</button>
+        </form>
+        <div class="status" id="status"></div>
+    </div>
+    <script>
+        let latitude = "";
+        let longitude = "";
+        function getLocation() {
+            if (!navigator.geolocation) {
+                document.getElementById("gpsStatus").innerHTML =
+                    "Geolocation not supported";
+                return;
+            }
+            navigator.geolocation.getCurrentPosition(
+                function (position) {
+                    latitude = position.coords.latitude;
+                    longitude = position.coords.longitude;
+                    document.getElementById("gpsStatus").innerHTML =
+                        "Lat: " + latitude.toFixed(6) +
+                        "<br>Lon: " + longitude.toFixed(6);
+                },
+                function (error) {
+                    document.getElementById("gpsStatus").innerHTML =
+                        "GPS Error: " + error.message;
+                },
+                {
+                    enableHighAccuracy: true
+                }
+            );
+        }
+        getLocation();
+        document.getElementById("treeForm").addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const payload = {
+                latitude: latitude,
+                longitude: longitude,
+                tree_id: document.getElementById("tree_id").value,
+                common_name: document.getElementById("common_name").value,
+                scientific_name: document.getElementById("scientific_name").value,
+                synonyms: document.getElementById("synonyms").value,
+                family: document.getElementById("family").value,
+                leaf_characteristics: document.getElementById("leaf_characteristics").value,
+                phenology: document.getElementById("phenology").value,
+                type: document.getElementById("type").value,
+                condition: document.getElementById("condition").value,
+                growth_stage: document.getElementById("growth_stage").value,
+                road_width_m: document.getElementById("road_width_m").value,
+                height_m: document.getElementById("height_m").value,
+                width_m: document.getElementById("width_m").value
+            };
+            const response = await fetch("/submit", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            });
+            const result = await response.json();
+            document.getElementById("status").innerHTML =
+                "Saved. FID: " + result.fid;
+            document.getElementById("treeForm").reset();
+            document.getElementById("road_width_m").value = 24;
+            document.getElementById("height_m").value = 10;
+            document.getElementById("width_m").value = 0.5;
+            getLocation();
+        });
+    </script>
+</body>
+
+</html>
