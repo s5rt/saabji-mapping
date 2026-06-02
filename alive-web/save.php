@@ -4,7 +4,7 @@ error_reporting(E_ALL);
 header('Content-Type: application/json');
 try {
     $dir = __DIR__ . '/data-csv';
-    $file = $dir . '/alldata.csv';
+    $file = $dir . '/day-1.csv';
     if (!is_dir($dir)) {
         mkdir($dir, 0777, true);
     }
