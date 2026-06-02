@@ -106,13 +106,13 @@
         let latitude = "";
         let longitude = "";
         const heightSelect = document.getElementById("height_m");
-        for (let i = 10; i <= 25.0001; i += 0.5) {
+        for (let i = 5; i <= 25.0001; i += 0.5) {
             const option = document.createElement("option");
             option.value = i.toFixed(1);
             option.textContent = i.toFixed(1);
             heightSelect.appendChild(option);
         }
-        heightSelect.value = "10.0";
+        heightSelect.value = "20.0";
         const widthSelect = document.getElementById("width_m");
         for (let i = 0.5; i <= 5.0001; i += 0.1) {
             const option = document.createElement("option");
@@ -179,7 +179,7 @@
                     document.getElementById("treeForm").reset();
                     document.getElementById("condition").value = "good";
                     document.getElementById("growth_stage").value = "young";
-                    document.getElementById("height_m").value = "10.0";
+                    document.getElementById("height_m").value = "5.0";
                     document.getElementById("width_m").value = "0.5";
                     getLocation();
                 } catch (error) {
