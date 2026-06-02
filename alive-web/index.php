@@ -14,8 +14,8 @@
         body {
             margin: 0;
             padding: 12px;
-            background: #ffffff;
-            color: #000000;
+            background: #fff;
+            color: #000;
         }
 
         .container {
@@ -40,10 +40,8 @@
             width: 100%;
             padding: 12px;
             border: 1px solid #000;
-            background: #fff;
-            color: #000;
-            font-size: 16px;
             border-radius: 4px;
+            font-size: 16px;
         }
 
         button {
@@ -54,6 +52,7 @@
             background: #000;
             color: #fff;
             font-size: 16px;
+            cursor: pointer;
         }
 
         .gps {
@@ -84,14 +83,14 @@
             <input type="text" id="common_name">
             <label>Condition</label>
             <select id="condition">
-                <option value="good" selected>Good</option>
+                <option value="good">Good</option>
                 <option value="moderate">Moderate</option>
                 <option value="poor">Poor</option>
                 <option value="dead">Dead</option>
             </select>
             <label>Growth Stage</label>
             <select id="growth_stage">
-                <option value="young" selected>Young</option>
+                <option value="young">Young</option>
                 <option value="mature">Mature</option>
                 <option value="old">Old</option>
             </select>
@@ -104,10 +103,10 @@
         <div class="status" id="status"></div>
     </div>
     <script>
-        let latitude = null;
-        let longitude = null;
+        let latitude = "";
+        let longitude = "";
         const heightSelect = document.getElementById("height_m");
-        for (let i = 10; i <= 25; i += 0.5) {
+        for (let i = 10; i <= 25.0001; i += 0.5) {
             const option = document.createElement("option");
             option.value = i.toFixed(1);
             option.textContent = i.toFixed(1);
@@ -115,7 +114,7 @@
         }
         heightSelect.value = "10.0";
         const widthSelect = document.getElementById("width_m");
-        for (let i = 0.5; i <= 5.0; i += 0.1) {
+        for (let i = 0.5; i <= 5.0001; i += 0.1) {
             const option = document.createElement("option");
             option.value = i.toFixed(1);
             option.textContent = i.toFixed(1);
@@ -124,7 +123,7 @@
         widthSelect.value = "0.5";
         function getLocation() {
             if (!navigator.geolocation) {
-                document.getElementById("gpsStatus").innerHTML =
+                document.getElementById("gpsStatus").textContent =
                     "Geolocation not supported";
                 return;
             }
@@ -137,11 +136,13 @@
                         "<br>Lon: " + longitude.toFixed(6);
                 },
                 function (error) {
-                    document.getElementById("gpsStatus").innerHTML =
+                    document.getElementById("gpsStatus").textContent =
                         "GPS Error: " + error.message;
                 },
                 {
-                    enableHighAccuracy: true
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
                 }
             );
         }
@@ -150,24 +151,20 @@
             "submit",
             async function (e) {
                 e.preventDefault();
+                const status = document.getElementById("status");
+                status.textContent = "Saving...";
                 const payload = {
-                    latitude: latitude,
-                    longitude: longitude,
+                    latitude,
+                    longitude,
                     tree_id: document.getElementById("tree_id").value.trim(),
                     common_name: document.getElementById("common_name").value.trim(),
-                    scientific_name: "",
-                    synonyms: "",
-                    family: "",
-                    leaf_characteristics: "",
-                    phenology: "",
-                    type: "",
                     condition: document.getElementById("condition").value,
                     growth_stage: document.getElementById("growth_stage").value,
                     height_m: document.getElementById("height_m").value,
                     width_m: document.getElementById("width_m").value
                 };
                 try {
-                    const response = await fetch("/submit", {
+                    const response = await fetch("save.php", {
                         method: "POST",
                         headers: {
                             "Content-Type": "application/json"
@@ -175,18 +172,18 @@
                         body: JSON.stringify(payload)
                     });
                     const result = await response.json();
-                    document.getElementById("status").innerHTML =
-                        "Saved. FID: " + result.fid;
-                    document.getElementById("tree_id").value = "";
-                    document.getElementById("common_name").value = "";
+                    if (result.status !== "success") {
+                        throw new Error(result.message || "Save failed");
+                    }
+                    status.textContent = "Saved. FID: " + result.fid;
+                    document.getElementById("treeForm").reset();
                     document.getElementById("condition").value = "good";
                     document.getElementById("growth_stage").value = "young";
                     document.getElementById("height_m").value = "10.0";
                     document.getElementById("width_m").value = "0.5";
                     getLocation();
                 } catch (error) {
-                    document.getElementById("status").innerHTML =
-                        "Failed to save";
+                    status.textContent = error.message;
                 }
             }
         );
