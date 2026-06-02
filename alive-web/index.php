@@ -114,13 +114,13 @@
         }
         heightSelect.value = "20.0";
         const widthSelect = document.getElementById("width_m");
-        for (let i = 0.5; i <= 5.0001; i += 0.1) {
+        for (let i = 0.5; i <= 10.0001; i += 0.1) {
             const option = document.createElement("option");
             option.value = i.toFixed(1);
             option.textContent = i.toFixed(1);
             widthSelect.appendChild(option);
         }
-        widthSelect.value = "0.5";
+        widthSelect.value = "5.0";
         function getLocation() {
             if (!navigator.geolocation) {
                 document.getElementById("gpsStatus").textContent =
