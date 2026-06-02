@@ -68,11 +68,6 @@
             text-align: center;
             font-weight: bold;
         }
-
-        select {
-            appearance: auto;
-            -webkit-appearance: auto;
-        }
     </style>
 </head>
 
@@ -83,22 +78,10 @@
             Waiting for GPS...
         </div>
         <form id="treeForm">
-            <label>Tree ID</label>
-            <input type="text" id="tree_id">
+            <label>Tree ID *</label>
+            <input type="text" id="tree_id" required>
             <label>Common Name</label>
             <input type="text" id="common_name">
-            <label>Scientific Name</label>
-            <input type="text" id="scientific_name">
-            <label>Synonyms</label>
-            <input type="text" id="synonyms">
-            <label>Family</label>
-            <input type="text" id="family">
-            <label>Leaf Characteristics</label>
-            <input type="text" id="leaf_characteristics">
-            <label>Phenology</label>
-            <input type="text" id="phenology">
-            <label>Type</label>
-            <input type="text" id="type">
             <label>Condition</label>
             <select id="condition">
                 <option value="good" selected>Good</option>
@@ -170,14 +153,14 @@
                 const payload = {
                     latitude: latitude,
                     longitude: longitude,
-                    tree_id: document.getElementById("tree_id").value,
-                    common_name: document.getElementById("common_name").value,
-                    scientific_name: document.getElementById("scientific_name").value,
-                    synonyms: document.getElementById("synonyms").value,
-                    family: document.getElementById("family").value,
-                    leaf_characteristics: document.getElementById("leaf_characteristics").value,
-                    phenology: document.getElementById("phenology").value,
-                    type: document.getElementById("type").value,
+                    tree_id: document.getElementById("tree_id").value.trim(),
+                    common_name: document.getElementById("common_name").value.trim(),
+                    scientific_name: "",
+                    synonyms: "",
+                    family: "",
+                    leaf_characteristics: "",
+                    phenology: "",
+                    type: "",
                     condition: document.getElementById("condition").value,
                     growth_stage: document.getElementById("growth_stage").value,
                     height_m: document.getElementById("height_m").value,
@@ -194,7 +177,8 @@
                     const result = await response.json();
                     document.getElementById("status").innerHTML =
                         "Saved. FID: " + result.fid;
-                    document.getElementById("treeForm").reset();
+                    document.getElementById("tree_id").value = "";
+                    document.getElementById("common_name").value = "";
                     document.getElementById("condition").value = "good";
                     document.getElementById("growth_stage").value = "young";
                     document.getElementById("height_m").value = "10.0";
