@@ -163,7 +163,8 @@
                     condition: document.getElementById("condition").value,
                     growth_stage: document.getElementById("growth_stage").value,
                     height_m: document.getElementById("height_m").value,
-                    width_m: document.getElementById("width_m").value
+                    width_m: document.getElementById("width_m").value,
+                    remarks: document.getElementById("remarks").value.trim()
                 };
                 try {
                     const response = await fetch("save.php", {
