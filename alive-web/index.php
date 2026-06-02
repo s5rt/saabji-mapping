@@ -98,6 +98,8 @@
             <select id="height_m"></select>
             <label>Width (m)</label>
             <select id="width_m"></select>
+            <label>Remarks</label>
+            <input type="text" id="remarks">
             <button type="submit">Save Record</button>
         </form>
         <div class="status" id="status"></div>

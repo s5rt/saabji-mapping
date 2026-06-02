@@ -26,7 +26,8 @@ try {
         "growth_stage",
         "road_width_m",
         "height_m",
-        "width_m"
+        "width_m",
+        "remarks"
     ];
     if (!file_exists($file)) {
         $fp = fopen($file, 'w');
@@ -66,7 +67,8 @@ try {
         $input['growth_stage'] ?? '',
         24,
         $input['height_m'] ?? '',
-        $input['width_m'] ?? ''
+        $input['width_m'] ?? '',
+        $input['remarks'] ?? ''
     ];
     $fp = fopen($file, 'a');
     if (!$fp) {
