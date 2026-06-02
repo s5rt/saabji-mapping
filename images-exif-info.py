@@ -1,6 +1,6 @@
 from pathlib import Path
 import exifread
-image_path = ""
+image_path = "images-day-wise/day-2/IMG_20260516_214816294.jpg"
 output_md = "image_metadata.md"
 exclude_fields = {
     "JPEGThumbnail",
