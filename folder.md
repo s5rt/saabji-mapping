@@ -1,9 +1,14 @@
 ./
 ├── ./alive-web/
+│   ├── ./alive-web/api/
+│   │   └── routes.py
 │   ├── ./alive-web/data-csv/
 │   │   └── alldata.csv
-│   ├── app.py
-│   └── index.html
+│   ├── ./alive-web/functions/
+│   │   └── survey.py
+│   ├── ./alive-web/templates/
+│   │   └── survey.html
+│   └── app.py
 ├── ./date-marked/
 │   ├── ./date-marked/2026-04-24/
 │   │   └── IMG_0753.jpg

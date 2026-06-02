@@ -13,9 +13,9 @@
 
         body {
             margin: 0;
-            background: #fff;
-            color: #000;
             padding: 12px;
+            background: #ffffff;
+            color: #000000;
         }
 
         .container {
@@ -25,14 +25,13 @@
 
         h2 {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         label {
             display: block;
             margin-top: 12px;
             margin-bottom: 4px;
-            font-size: 14px;
             font-weight: 600;
         }
 
@@ -43,8 +42,8 @@
             border: 1px solid #000;
             background: #fff;
             color: #000;
-            border-radius: 4px;
             font-size: 16px;
+            border-radius: 4px;
         }
 
         button {
@@ -55,24 +54,24 @@
             background: #000;
             color: #fff;
             font-size: 16px;
-            cursor: pointer;
         }
 
-        button:hover {
-            opacity: 0.9;
+        .gps {
+            border: 1px solid #000;
+            padding: 8px;
+            margin-bottom: 12px;
+            font-size: 13px;
         }
 
         .status {
-            margin-top: 15px;
+            margin-top: 12px;
             text-align: center;
             font-weight: bold;
         }
 
-        .gps {
-            font-size: 13px;
-            margin-top: 10px;
-            padding: 8px;
-            border: 1px solid #000;
+        select {
+            appearance: auto;
+            -webkit-appearance: auto;
         }
     </style>
 </head>
@@ -102,28 +101,44 @@
             <input type="text" id="type">
             <label>Condition</label>
             <select id="condition">
-                <option value="good">Good</option>
+                <option value="good" selected>Good</option>
                 <option value="moderate">Moderate</option>
                 <option value="poor">Poor</option>
-                <option value="bad">Dead</option>
+                <option value="dead">Dead</option>
             </select>
             <label>Growth Stage</label>
             <select id="growth_stage">
-                <option value="young">Young</option>
+                <option value="young" selected>Young</option>
                 <option value="mature">Mature</option>
                 <option value="old">Old</option>
             </select>
             <label>Height (m)</label>
-            <input type="number" id="height_m" min="10" max="25" step="0.1" value="10">
+            <select id="height_m"></select>
             <label>Width (m)</label>
-            <input type="number" id="width_m" min="0.5" max="5" step="0.1" value="0.5">
+            <select id="width_m"></select>
             <button type="submit">Save Record</button>
         </form>
         <div class="status" id="status"></div>
     </div>
     <script>
-        let latitude = "";
-        let longitude = "";
+        let latitude = null;
+        let longitude = null;
+        const heightSelect = document.getElementById("height_m");
+        for (let i = 10; i <= 25; i += 0.5) {
+            const option = document.createElement("option");
+            option.value = i.toFixed(1);
+            option.textContent = i.toFixed(1);
+            heightSelect.appendChild(option);
+        }
+        heightSelect.value = "10.0";
+        const widthSelect = document.getElementById("width_m");
+        for (let i = 0.5; i <= 5.0; i += 0.1) {
+            const option = document.createElement("option");
+            option.value = i.toFixed(1);
+            option.textContent = i.toFixed(1);
+            widthSelect.appendChild(option);
+        }
+        widthSelect.value = "0.5";
         function getLocation() {
             if (!navigator.geolocation) {
                 document.getElementById("gpsStatus").innerHTML =
@@ -148,40 +163,49 @@
             );
         }
         getLocation();
-        document.getElementById("treeForm").addEventListener("submit", async function (e) {
-            e.preventDefault();
-            const payload = {
-                latitude: latitude,
-                longitude: longitude,
-                tree_id: document.getElementById("tree_id").value,
-                common_name: document.getElementById("common_name").value,
-                scientific_name: document.getElementById("scientific_name").value,
-                synonyms: document.getElementById("synonyms").value,
-                family: document.getElementById("family").value,
-                leaf_characteristics: document.getElementById("leaf_characteristics").value,
-                phenology: document.getElementById("phenology").value,
-                type: document.getElementById("type").value,
-                condition: document.getElementById("condition").value,
-                growth_stage: document.getElementById("growth_stage").value,
-                road_width_m: document.getElementById("road_width_m").value,
-                height_m: document.getElementById("height_m").value,
-                width_m: document.getElementById("width_m").value
-            };
-            const response = await fetch("/submit", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(payload)
-            });
-            const result = await response.json();
-            document.getElementById("status").innerHTML =
-                "Saved. FID: " + result.fid;
-            document.getElementById("treeForm").reset();
-            document.getElementById("height_m").value = 10;
-            document.getElementById("width_m").value = 0.5;
-            getLocation();
-        });
+        document.getElementById("treeForm").addEventListener(
+            "submit",
+            async function (e) {
+                e.preventDefault();
+                const payload = {
+                    latitude: latitude,
+                    longitude: longitude,
+                    tree_id: document.getElementById("tree_id").value,
+                    common_name: document.getElementById("common_name").value,
+                    scientific_name: document.getElementById("scientific_name").value,
+                    synonyms: document.getElementById("synonyms").value,
+                    family: document.getElementById("family").value,
+                    leaf_characteristics: document.getElementById("leaf_characteristics").value,
+                    phenology: document.getElementById("phenology").value,
+                    type: document.getElementById("type").value,
+                    condition: document.getElementById("condition").value,
+                    growth_stage: document.getElementById("growth_stage").value,
+                    height_m: document.getElementById("height_m").value,
+                    width_m: document.getElementById("width_m").value
+                };
+                try {
+                    const response = await fetch("/submit", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(payload)
+                    });
+                    const result = await response.json();
+                    document.getElementById("status").innerHTML =
+                        "Saved. FID: " + result.fid;
+                    document.getElementById("treeForm").reset();
+                    document.getElementById("condition").value = "good";
+                    document.getElementById("growth_stage").value = "young";
+                    document.getElementById("height_m").value = "10.0";
+                    document.getElementById("width_m").value = "0.5";
+                    getLocation();
+                } catch (error) {
+                    document.getElementById("status").innerHTML =
+                        "Failed to save";
+                }
+            }
+        );
     </script>
 </body>
 
