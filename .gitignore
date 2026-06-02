@@ -1,5 +1,3 @@
-/date-marked
-/unmarked-images
-/alive-web/__pycache__
-/alive-web/api/__pycache__
-/alive-web/functions/__pycache__
+/images-date-marked
+/images-day-wise
+/images-unmarked
